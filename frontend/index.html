@@ -253,14 +253,41 @@
         }
 
         .hero {
+            position: relative;
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 10rem 4rem;
             margin-bottom: 3rem;
-            background: var(--bg-card);
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 24px;
             box-shadow: var(--shadow-card);
+            overflow: hidden;
+            background: black; /* Fallback */
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 1;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4); /* Just a light overlay for text readability */
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
         }
 
         .hero h1 {
@@ -772,11 +799,16 @@
             </nav>
 
             <section class="hero reveal">
-                <h1>Trust Before You Invest</h1>
-                <p>Monitor influencer authenticity, detect campaign risks, and prevent marketing budget waste with AI-powered intelligence.</p>
-                <div class="hero-buttons">
-                    <button class="btn-primary" onclick="window.location.href='analyze.html'">Analyze Influencer</button>
-                    <button class="btn-secondary">View Demo</button>
+                <video autoplay loop muted playsinline class="hero-video">
+                    <source src="hero-bg.mp4" type="video/mp4">
+                </video>
+                <div class="hero-content">
+                    <h1>Trust Before You Invest</h1>
+                    <p>Monitor influencer authenticity, detect campaign risks, and prevent marketing budget waste with AI-powered intelligence.</p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary" onclick="window.location.href='analyze.html'">Analyze Influencer</button>
+                        <button class="btn-secondary">View Demo</button>
+                    </div>
                 </div>
             </section>
 

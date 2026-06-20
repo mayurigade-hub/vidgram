@@ -1,0 +1,36 @@
+{
+  "authenticity_score": 100,
+  "risk_level": "Low",
+  "evidence": [
+    "Growth (100/100): 7-day follower growth pattern is within expected range.",
+    "Engagement (100/100): Engagement rate is consistent with audience size.",
+    "Comment (100/100): Comment quality appears natural.",
+    "Audience Quality (93/100): Audience quality indicators are within expected range.",
+    "Consistency (100/100): Posting cadence is stable enough for campaign forecasting.",
+    "ML Risk (13%): ML fraud probability is 12.7%; authenticity score adjusted by +2."
+  ],
+  "campaign_risk": {
+    "expected_reach": 30000.0,
+    "genuine_reach": 28020.0,
+    "fake_reach": 1980.0,
+    "fake_reach_ratio": 0.066,
+    "estimated_loss": 660.0
+  },
+  "ml_risk": {
+    "fraud_probability": 0.1266,
+    "score_adjustment": 2,
+    "features": {
+      "max_daily_growth_rate": 0.0288,
+      "average_daily_growth_rate": 0.0177,
+      "engagement_drop_rate": 0.0269,
+      "spam_comment_ratio": 0,
+      "duplicate_comment_ratio": 0,
+      "bot_follower_ratio": 0.03,
+      "suspicious_follower_ratio": 0.06,
+      "inactive_follower_ratio": 0.12,
+      "posting_variability": 0.0707
+    },
+    "explanation": "ML fraud probability is 12.7%; authenticity score adjusted by +2."
+  },
+  "alerts": []
+}

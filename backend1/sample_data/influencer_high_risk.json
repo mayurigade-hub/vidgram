@@ -1,0 +1,32 @@
+{
+  "influencer_id": "inf_002",
+  "username": "growth_hacker_viral",
+  "followers": 85000,
+  "following": 120,
+  "average_likes": 400,
+  "average_comments": 20,
+  "engagement_rate": 0.0049,
+  "previous_engagement_rate": 0.028,
+  "follower_history": [18000, 18200, 18500, 19000, 65000, 83000, 85000],
+  "posts_per_week_history": [0, 6, 1, 8, 0, 7],
+  "comments": [
+    "buy followers now http://spam.example",
+    "buy followers now http://spam.example",
+    "dm for collab",
+    "promo promo promo",
+    "Great post",
+    "check my profile",
+    "telegram giveaway"
+  ],
+  "suspicious_follower_ratio": 0.38,
+  "bot_follower_ratio": 0.22,
+  "inactive_follower_ratio": 0.45,
+  "audience_geo_mismatch_ratio": 0.34,
+  "previous_authenticity_score": 76,
+  "campaign": {
+    "budget": 20000,
+    "expected_reach": 60000,
+    "cpm": 18
+  }
+}
+

@@ -1,0 +1,30 @@
+{
+  "influencer_id": "inf_001",
+  "username": "real_creator",
+  "followers": 50000,
+  "following": 900,
+  "average_likes": 2400,
+  "average_comments": 130,
+  "engagement_rate": 0.0506,
+  "previous_engagement_rate": 0.052,
+  "follower_history": [45000, 45600, 46250, 47000, 47800, 48600, 50000],
+  "posts_per_week_history": [3, 3, 4, 3, 4, 3],
+  "comments": [
+    "Love this review",
+    "This helped me choose the right product",
+    "Great breakdown",
+    "Your content keeps getting better",
+    "Saving this for later"
+  ],
+  "suspicious_follower_ratio": 0.06,
+  "bot_follower_ratio": 0.03,
+  "inactive_follower_ratio": 0.12,
+  "audience_geo_mismatch_ratio": 0.08,
+  "previous_authenticity_score": 86,
+  "campaign": {
+    "budget": 10000,
+    "expected_reach": 30000,
+    "cpm": 12
+  }
+}
+

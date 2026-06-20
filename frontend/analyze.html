@@ -627,7 +627,7 @@
 <div class="main-search">
     <i class="ph ph-at" style="color: var(--accent-blue); font-size: 1.2rem;"></i>
     <input type="text" placeholder="Search Influencer (e.g., @username)" id="influencerSearch">
-    <button class="btn-primary">Analyze</button>
+    <button class="btn-primary" id="analyzeBtn">Analyze</button>
 </div>
 
             <section class="metrics-grid">
@@ -636,7 +636,7 @@
                         <span>Followers Count</span>
                         <i class="ph ph-users metric-icon"></i>
                     </div>
-                    <div class="metric-value">112,500</div>
+                    <div class="metric-value" id="valFollowers">-</div>
                     <div class="metric-sub">Total Audience</div>
                 </div>
                 <div class="card metric-card metric-purple reveal reveal-delay-2">
@@ -644,24 +644,24 @@
                         <span>Engagement Rate</span>
                         <i class="ph ph-heart metric-icon" style="color: #1e40af; background: rgba(30, 64, 175, 0.1);"></i>
                     </div>
-                    <div class="metric-value">4.8%</div>
-                    <div class="metric-sub">Above average</div>
+                    <div class="metric-value" id="valEngagement">-</div>
+                    <div class="metric-sub">Interaction level</div>
                 </div>
                 <div class="card metric-card metric-purple reveal reveal-delay-2">
                     <div class="metric-header">
-                        <span>Audience Quality</span>
+                        <span>Fraud Probability</span>
                         <i class="ph ph-shield-star metric-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"></i>
                     </div>
-                    <div class="metric-value">82%</div>
-                    <div class="metric-sub">Genuine Users</div>
+                    <div class="metric-value" id="valFraud">-</div>
+                    <div class="metric-sub">AI Detection</div>
                 </div>
-                <div class="card metric-card metric-green reveal reveal-delay-3">
+                <div class="card metric-card metric-green reveal reveal-delay-3" id="cardAuth">
                     <div class="metric-header">
                         <span>Authenticity Score</span>
                         <i class="ph ph-shield-check metric-icon" style="color: var(--accent-green); background: rgba(16, 185, 129, 0.1);"></i>
                     </div>
-                    <div class="metric-value">84/100</div>
-                    <div class="metric-sub" style="color: var(--accent-green);">Low Risk</div>
+                    <div class="metric-value" id="valAuth">-</div>
+                    <div class="metric-sub" id="valRisk" style="color: var(--accent-green);">-</div>
                 </div>
             </section>
 
@@ -759,6 +759,80 @@
 
             document.querySelectorAll('.reveal').forEach(el => {
                 revealObserver.observe(el);
+            });
+
+            // API Integration
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const searchInput = document.getElementById('influencerSearch');
+
+            analyzeBtn.addEventListener('click', async () => {
+                const username = searchInput.value.replace('@', '').trim();
+                if (!username) return;
+                
+                try {
+                    analyzeBtn.textContent = 'Analyzing...';
+                    analyzeBtn.disabled = true;
+
+                    // Fetch from Backend 1 (Fraud Detection)
+                    const res = await fetch(`http://localhost:8000/api/analyze/${username}`);
+                    const data = await res.json();
+                    
+                    if (res.ok) {
+                        // Update DOM for analyze
+                        document.getElementById('valFollowers').textContent = (data.followers || 0).toLocaleString();
+                        document.getElementById('valEngagement').textContent = ((data.engagement_rate || 0) * 100).toFixed(2) + '%';
+                        document.getElementById('valFraud').textContent = ((data.fraud_probability || 0) * 100).toFixed(1) + '%';
+                        document.getElementById('valAuth').textContent = (data.authenticity_score || 0) + '/100';
+                        document.getElementById('valRisk').textContent = (data.risk_level || 'Unknown') + ' Risk';
+                        
+                        // Update color based on risk
+                        const riskLevel = data.risk_level?.toLowerCase() || '';
+                        const cardAuth = document.getElementById('cardAuth');
+                        cardAuth.className = 'card metric-card reveal active ' + 
+                            (riskLevel === 'high' ? 'metric-red' : (riskLevel === 'medium' ? 'metric-yellow' : 'metric-green'));
+                        
+                        // Render Evidence
+                        const evidenceGrid = document.querySelector('.evidence-grid');
+                        evidenceGrid.innerHTML = '';
+                        
+                        if (data.evidence && data.evidence.length > 0) {
+                            data.evidence.forEach(ev => {
+                                // Default styling logic
+                                let isGood = false;
+                                let isSuspicious = true;
+                                
+                                if (ev.description && ev.description.includes("Good") || ev.detail && ev.detail.includes("healthy")) {
+                                    isGood = true;
+                                    isSuspicious = false;
+                                }
+
+                                const div = document.createElement('div');
+                                div.className = `evidence-item ${isGood ? 'good' : (isSuspicious ? 'suspicious' : 'bad')} reveal active`;
+                                div.innerHTML = `
+                                    <div class="evidence-header">
+                                        <div class="evidence-icon-box">
+                                            <i class="ph ${isGood ? 'ph-check-circle' : 'ph-warning'}"></i>
+                                        </div>
+                                        <h3 class="evidence-title">${ev.category || 'Observation'}</h3>
+                                    </div>
+                                    <p class="evidence-desc">${ev.description || ev.detail || JSON.stringify(ev)}</p>
+                                    <span class="evidence-tag">${isGood ? 'Positive Signal' : 'Anomaly Detected'}</span>
+                                `;
+                                evidenceGrid.appendChild(div);
+                            });
+                        } else {
+                            evidenceGrid.innerHTML = '<p>No specific evidence items found.</p>';
+                        }
+                    } else {
+                        alert(data.detail || 'Influencer not found');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Failed to connect to backend APIs. Is the server running?');
+                } finally {
+                    analyzeBtn.textContent = 'Analyze';
+                    analyzeBtn.disabled = false;
+                }
             });
         });
     </script>

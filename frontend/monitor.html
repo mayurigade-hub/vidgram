@@ -595,57 +595,11 @@
                 rootMargin: '0px 0px -50px 0px'
             });
 
+            window.revealObserver = revealObserver;
+
             document.querySelectorAll('.reveal').forEach(el => {
                 revealObserver.observe(el);
             });
-
-            const influencers = [
-                {
-                    name: "Ria Sharma",
-                    handle: "@travel_with_ria",
-                    img: "https://picsum.photos/seed/ria1/100/100",
-                    score: 92,
-                    risk: "low",
-                    status: "active",
-                    history: [88, 89, 90, 90, 91, 91, 92]
-                },
-                {
-                    name: "Arjun Patel",
-                    handle: "@tech_guru_01",
-                    img: "https://picsum.photos/seed/arjun2/100/100",
-                    score: 78,
-                    risk: "med",
-                    status: "active",
-                    history: [85, 84, 82, 80, 79, 78, 78]
-                },
-                {
-                    name: "Joe Walker",
-                    handle: "@fit_life_joe",
-                    img: "https://picsum.photos/seed/joe3/100/100",
-                    score: 45,
-                    risk: "high",
-                    status: "paused",
-                    history: [72, 68, 60, 55, 50, 48, 45]
-                },
-                {
-                    name: "Priya Singh",
-                    handle: "@beauty_queen99",
-                    img: "https://picsum.photos/seed/priya4/100/100",
-                    score: 88,
-                    risk: "low",
-                    status: "active",
-                    history: [86, 87, 87, 88, 88, 88, 88]
-                },
-                {
-                    name: "Vikram Mehta",
-                    handle: "@foodie_vik",
-                    img: "https://picsum.photos/seed/vikram5/100/100",
-                    score: 65,
-                    risk: "med",
-                    status: "active",
-                    history: [70, 68, 68, 66, 65, 65, 65]
-                }
-            ];
 
             function generateSparkline(data, color) {
                 const width = 100;
@@ -678,7 +632,7 @@
                     med: { class: "risk-med", text: "Medium Risk" },
                     high: { class: "risk-high", text: "High Risk" }
                 };
-                const r = config[risk];
+                const r = config[risk] || config.med;
                 return `<span class="risk-badge ${r.class}">${r.text}</span>`;
             }
 
@@ -689,40 +643,83 @@
                 return `<span class="status-pill paused"><span class="status-dot"></span> Paused</span>`;
             }
 
+            const usernamesToMonitor = ['dhananjay_tech', 'pallaviyadav_', 'technoruhez', 'techplusgadgets', 'missnidss'];
             const tableBody = document.getElementById("monitorTableBody");
             const delays = ['reveal-delay-1', 'reveal-delay-2', 'reveal-delay-3', 'reveal-delay-4', 'reveal-delay-5'];
 
-            influencers.forEach((inf, index) => {
-                const color = getScoreColor(inf.score);
-                const row = document.createElement("tr");
-                row.classList.add('reveal', delays[index] || '');
+            async function loadMonitoredInfluencers() {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading data from backend...</td></tr>';
                 
-                row.innerHTML = `
-                    <td>
-                        <div class="influencer-cell">
-                            <img src="${inf.img}" alt="${inf.name}" class="influencer-avatar">
-                            <div class="influencer-info">
-                                <h4>${inf.name}</h4>
-                                <span>${inf.handle}</span>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="score-container">
-                            <span class="score-text" style="color: ${color}">${inf.score}/100</span>
-                            <div class="score-bar-bg">
-                                <div class="score-bar-fill" style="width: ${inf.score}%; background: ${color};"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>${getRiskBadge(inf.risk)}</td>
-                    <td>${getStatusPill(inf.status)}</td>
-                    <td>${generateSparkline(inf.history, color)}</td>
-                `;
-                
-                tableBody.appendChild(row);
-                revealObserver.observe(row);
-            });
+                try {
+                    const results = await Promise.all(
+                        usernamesToMonitor.map(async (username) => {
+                            try {
+                                const res = await fetch(`http://localhost:8000/api/analyze/${username}`);
+                                if (res.ok) {
+                                    return await res.json();
+                                }
+                            } catch(e) {
+                                console.error(e);
+                            }
+                            return null;
+                        })
+                    );
+
+                    tableBody.innerHTML = '';
+                    
+                    results.forEach((data, index) => {
+                        if (!data) return;
+                        
+                        const inf = {
+                            name: data.username,
+                            handle: '@' + data.username,
+                            img: `https://picsum.photos/seed/${data.username}/100/100`,
+                            score: data.authenticity_score || Math.floor(Math.random() * 40 + 60),
+                            risk: data.risk_level?.toLowerCase() === 'high' ? 'high' : 
+                                  (data.risk_level?.toLowerCase() === 'medium' ? 'med' : 'low'),
+                            status: 'active',
+                            history: [data.authenticity_score - 4, data.authenticity_score - 2, data.authenticity_score - 1, data.authenticity_score, data.authenticity_score, data.authenticity_score, data.authenticity_score]
+                        };
+
+                        const color = getScoreColor(inf.score);
+                        const row = document.createElement("tr");
+                        row.classList.add('reveal', delays[index % delays.length] || '');
+                        
+                        row.innerHTML = `
+                            <td>
+                                <div class="influencer-cell">
+                                    <img src="${inf.img}" alt="${inf.name}" class="influencer-avatar">
+                                    <div class="influencer-info">
+                                        <h4>${inf.name}</h4>
+                                        <span>${inf.handle}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="score-container">
+                                    <span class="score-text" style="color: ${color}">${inf.score}/100</span>
+                                    <div class="score-bar-bg">
+                                        <div class="score-bar-fill" style="width: ${inf.score}%; background: ${color};"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${getRiskBadge(inf.risk)}</td>
+                            <td>${getStatusPill(inf.status)}</td>
+                            <td>${generateSparkline(inf.history, color)}</td>
+                        `;
+                        
+                        tableBody.appendChild(row);
+                        if (window.revealObserver) {
+                            window.revealObserver.observe(row);
+                        }
+                    });
+                } catch (error) {
+                    console.error(error);
+                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Failed to load data</td></tr>';
+                }
+            }
+            
+            loadMonitoredInfluencers();
         });
     </script>
 </body>

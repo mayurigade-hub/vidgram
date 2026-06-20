@@ -266,11 +266,12 @@
         }
 
         .page-title {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2.6rem;
+            font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
         }
 
         .card {
@@ -397,10 +398,36 @@
         }
 
         .output-value {
-    font-size: 3rem;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -2px;
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px;
+            margin: 0.5rem 0;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0, 154, 224, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 154, 224, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .output-sub {
@@ -468,10 +495,7 @@
 
         <main class="main-content">
             <nav class="navbar reveal">
-                <div class="search-bar">
-                    <i class="ph ph-magnifying-glass" style="color: var(--text-muted);"></i>
-                    <input type="text" placeholder="Jump to...">
-                </div>
+                <div></div>
                 <div class="nav-actions">
                     <button class="icon-btn">
                         <i class="ph ph-bell"></i>
@@ -514,7 +538,7 @@
                 <div class="output-card output-red reveal reveal-delay-2">
                     <div class="output-header">
                         <span>Fake Reach</span>
-                        <i class="ph ph-user-x output-icon" style="color: var(--accent-red); background: rgba(239, 68, 68, 0.1);"></i>
+                        <i class="ph ph-robot output-icon" style="color: var(--accent-red); background: rgba(239, 68, 68, 0.1);"></i>
                     </div>
                     <div class="output-value" id="outFake">16,000</div>
                     <div class="output-sub" style="color: var(--accent-red);">Bots / Suspicious</div>

@@ -266,30 +266,35 @@
         }
 
         .page-title {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2.6rem;
+            font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
         }
 
         .main-search {
-            background: white;
-            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: var(--glass-blur);
+            border: 2px solid rgba(0, 154, 224, 0.15);
             padding: 1rem 1.5rem;
-            border-radius: 16px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            width: 450px;
-            box-shadow: var(--shadow-card);
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
+            gap: 1rem;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 10px 40px -10px rgba(37, 99, 235, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 3rem;
         }
 
         .main-search:focus-within {
             border-color: #009ae0;
-            box-shadow: 0 8px 32px 0 rgba(37, 99, 235, 0.15);
+            box-shadow: 0 15px 50px -10px rgba(37, 99, 235, 0.25);
+            transform: translateY(-2px);
+            background: #ffffff;
         }
 
         .main-search input {
@@ -298,7 +303,8 @@
             color: var(--text-main);
             outline: none;
             width: 100%;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
 
         .btn-primary {
@@ -560,17 +566,32 @@
         }
 
         .category-filter{
-    background: rgba(255,255,255,.8);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: .8rem 1rem;
-    min-width: 220px;
-    font-size: .95rem;
-    color: var(--text-muted);
-    outline: none;
-    cursor: pointer;
-    box-shadow: var(--shadow-card);
-}
+            appearance: none;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: var(--glass-blur);
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23009ae0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.5rem top 50%;
+            background-size: 0.65rem auto;
+            border: 2px solid rgba(0, 154, 224, 0.15);
+            border-radius: 20px;
+            padding: 1rem 3rem 1rem 1.5rem;
+            min-width: 240px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 10px 40px -10px rgba(37, 99, 235, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .category-filter:hover, .category-filter:focus {
+            border-color: #009ae0;
+            box-shadow: 0 15px 50px -10px rgba(37, 99, 235, 0.25);
+            transform: translateY(-2px);
+            background-color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -614,14 +635,7 @@
             <header class="page-header reveal">
     <h1 class="page-title">Analyze Influencer</h1>
 
-    <select class="category-filter">
-        <option selected>All Categories</option>
-        <option>Fitness</option>
-        <option>Beauty</option>
-        <option>Skincare</option>
-        <option>Technology</option>
-        <option>Sports</option>
-    </select>
+
 </header>
 
 <div class="main-search">

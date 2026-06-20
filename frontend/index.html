@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidGram - Influencer Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-main: #f0f6ff;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-card-hover: rgba(255, 255, 255, 0.9);
+            --primary-gradient: linear-gradient(135deg, #00b4d8 0%, #009ae0 100%);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: rgba(59, 130, 246, 0.15);
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #2563eb;
+            --accent-yellow: #f59e0b;
+            --glass-blur: blur(20px);
+            --sidebar-width: 260px;
+            --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Sora', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
+                linear-gradient(135deg, #e0f2fe 0%, #f8fafc 50%, #eff6ff 100%);
+        }
+
+        .scroll-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 80px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: width 0.3s ease;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover, .sidebar.pinned {
+            width: var(--sidebar-width);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 80px;
+            padding: 2rem;
+            max-width: 1600px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.pinned + .main-content {
+            margin-left: var(--sidebar-width);
+        }
+
+        .logo {
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .sidebar-logo {
+            width: 55px;
+            height: auto;
+            border-radius: 8px;
+            transition: width 0.3s ease, margin-left 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-logo, .sidebar.pinned .sidebar-logo {
+            width: 180px;
+        }
+
+        .sidebar:hover .logo, .sidebar.pinned .logo {
+            justify-content: center;
+        }
+
+        .menu {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .menu-link i {
+            font-size: 1.25rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .menu-text {
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: inline-block;
+        }
+
+        .sidebar:hover .menu-text, .sidebar.pinned .menu-text {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .user-profile div {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar:hover .user-profile div, .sidebar.pinned .user-profile div {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .menu-link:hover {
+            background: transparent;
+            color: #009ae0;
+        }
+
+        .menu-link:hover i {
+            color: #009ae0;
+            filter: drop-shadow(0 0 4px rgba(0, 154, 224, 0.4));
+        }
+
+        .menu-link:active {
+            color: #009ae0;
+        }
+
+        .menu-link.active {
+            background: transparent;
+            color: #009ae0;
+            font-weight: 600;
+        }
+
+        .menu-link.active i {
+            color: #009ae0;
+            filter: drop-shadow(0 0 4px rgba(0, 154, 224, 0.5));
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+
+
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 300px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            outline: none;
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 4.5rem;
+            font-weight: 400;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 1.5rem;
+            color: #009ae0;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            line-height: 1.6;
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 100px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #009ae0;
+            border: 2px solid #009ae0;
+            padding: 0.75rem 2rem;
+            border-radius: 100px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #009ae0;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .card:hover {
+    transform: translateY(-8px);
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 20px 40px rgba(0,180,216,0.12);
+}
+
+        .metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+    border-top: 4px solid #00b4d8;
+        }
+
+        .metric-card::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(0,180,216,0.08);
+}
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .metric-icon {
+    font-size: 1.5rem;
+    color: #00b4d8;
+    background: rgba(0,180,216,0.12);
+    padding: 12px;
+    border-radius: 16px;
+}
+
+        .metric-value {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -1px;
+}
+
+        .metric-sub {
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .workflow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow-x: auto;
+            padding: 3rem 1rem;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(31,38,135,0.06);
+        }
+
+        .workflow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 160px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+
+        .workflow-step:hover {
+            transform: translateY(-6px);
+        }
+
+        .step-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #00b4d8 0%, #009ae0 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 12px 28px rgba(0, 154, 224, 0.35);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .workflow-step:hover .step-icon {
+            box-shadow: 0 18px 36px rgba(0, 154, 224, 0.5);
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 0.4rem;
+        }
+
+        .step-sub {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .workflow-arrow {
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, #009ae0, #00b4d8);
+            position: relative;
+            margin: 45px -8px 0 -8px;
+            min-width: 30px;
+            border-radius: 4px;
+            opacity: 0.6;
+        }
+
+        .workflow-arrow::after {
+            content: '';
+            position: absolute;
+            right: -1px;
+            top: -6px;
+            width: 0;
+            height: 0;
+            border-left: 12px solid #009ae0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-top: 4px solid #00b4d8;
+            border-radius: 24px;
+            padding: 2rem;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            transition: all .4s ease;
+            box-shadow:
+                0 10px 30px rgba(15,23,42,.04),
+                0 1px 2px rgba(15,23,42,.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow:
+                0 25px 50px rgba(0,180,216,.12),
+                0 10px 20px rgba(15,23,42,.08);
+        }
+
+        .feature-card::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: rgba(0,180,216,.08);
+            transition: .4s;
+        }
+
+        .feature-card:hover::before {
+            transform: scale(1.3);
+            background: rgba(0,180,216,.12);
+        }
+
+        .feature-header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-emoji {
+            font-size: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-desc {
+            font-size: 0.92rem;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: auto;
+        }
+
+        .feature-list li {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-list li::before {
+            content: '•';
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+        .reveal-delay-5 { transition-delay: 0.5s; }
+
+        @media (max-width: 1024px) {
+            .workflow-arrow { display: none; }
+            .workflow-container { justify-content: flex-start; gap: 1rem; }
+            .workflow-step { width: 120px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .hero h1 { font-size: 2rem; }
+        }
+
+        .btn-primary{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+}
+
+        /* CloudDrop Navbar Styles */
+        .clouddrop-navbar {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 100px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin: 0 auto 2rem auto;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .clouddrop-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .clouddrop-icon {
+            width: 36px;
+            height: 36px;
+            background: #0ea5e9;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .clouddrop-text {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .clouddrop-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .clouddrop-link {
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .clouddrop-link:hover {
+            color: #009ae0;
+            font-weight: 700;
+        }
+
+        .clouddrop-divider {
+            width: 1px;
+            height: 24px;
+            background: #cbd5e1;
+        }
+
+        .clouddrop-btn {
+            background: #0f172a;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .clouddrop-btn:hover {
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .clouddrop-navbar {
+                padding: 0.5rem 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                border-radius: 20px;
+            }
+            .clouddrop-right {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+            .clouddrop-divider {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-container">
+        <aside class="sidebar" id="mainSidebar">
+            <div class="logo" id="logoToggle">
+                <img src="logo.jpeg" alt="VG" class="sidebar-logo">
+            </div>
+            <ul class="menu">
+                <li class="menu-item"><a href="index.html" class="menu-link active"><i class="ph ph-squares-four"></i><span class="menu-text">Dashboard</span></a></li>
+                <li class="menu-item"><a href="analyze.html" class="menu-link"><i class="ph ph-magnifying-glass"></i><span class="menu-text">Analyze Influencer</span></a></li>
+                <li class="menu-item"><a href="monitor.html" class="menu-link"><i class="ph ph-activity"></i><span class="menu-text">Campaign Monitor</span></a></li>
+                <li class="menu-item"><a href="alerts.html" class="menu-link"><i class="ph ph-warning-circle"></i><span class="menu-text">Risk Alerts</span></a></li>
+                <li class="menu-item"><a href="timeline.html" class="menu-link"><i class="ph ph-clock-counter-clockwise"></i><span class="menu-text">Authenticity Timeline</span></a></li>
+                <li class="menu-item"><a href="budget.html" class="menu-link"><i class="ph ph-wallet"></i><span class="menu-text">Budget Simulator</span></a></li>
+                <li class="menu-item"><a href="reports.html" class="menu-link"><i class="ph ph-file-text"></i><span class="menu-text">Reports</span></a></li>
+                <li class="menu-item"><a href="settings.html" class="menu-link"><i class="ph ph-gear"></i><span class="menu-text">Settings</span></a></li>
+            </ul>
+            <div class="user-profile">
+                <img src="https://picsum.photos/seed/vidgramuser/100/100" alt="User" class="avatar">
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Alex Morgan</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Brand Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <nav class="clouddrop-navbar reveal">
+                <span class="clouddrop-text" style="margin-right: 1.5rem;">VidGram</span>
+                <div class="clouddrop-right">
+                    <a href="index.html#workflow" class="clouddrop-link">Workflow</a>
+                    <a href="index.html#features" class="clouddrop-link">Features</a>
+                    <div class="clouddrop-divider"></div>
+                    <a href="#" class="clouddrop-link">Sign In</a>
+                    <a href="#" class="clouddrop-btn">Get Started</a>
+                </div>
+            </nav>
+
+            <section class="hero reveal">
+                <h1>Trust Before You Invest</h1>
+                <p>Monitor influencer authenticity, detect campaign risks, and prevent marketing budget waste with AI-powered intelligence.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="window.location.href='analyze.html'">Analyze Influencer</button>
+                    <button class="btn-secondary">View Demo</button>
+                </div>
+            </section>
+
+            <section class="metrics-grid">
+                <div class="card metric-card reveal reveal-delay-1">
+                    <div class="metric-header">
+                        <span>Influencers Monitored</span>
+                        <i class="ph ph-users metric-icon"></i>
+                    </div>
+                    <div class="metric-value">12,450+</div>
+                    <div class="metric-sub">Across platforms</div>
+                </div>
+                <div class="card metric-card reveal reveal-delay-2">
+                    <div class="metric-header">
+                        <span>Avg. Authenticity Score</span>
+                        <i class="ph ph-shield-check metric-icon" style="color: #1e40af; background: rgba(30, 64, 175, 0.1);"></i>
+                    </div>
+                    <div class="metric-value">82/100</div>
+                    <div class="metric-sub">Healthy baseline</div>
+                </div>
+                <div class="card metric-card reveal reveal-delay-3">
+                    <div class="metric-header">
+                        <span>Budget Risk Prevented</span>
+                        <i class="ph ph-wallet metric-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"></i>
+                    </div>
+                    <div class="metric-value">₹2.4M</div>
+                    <div class="metric-sub">Saved for brands</div>
+                </div>
+                <div class="card metric-card reveal reveal-delay-4">
+                    <div class="metric-header">
+                        <span>Active Risk Alerts</span>
+                        <i class="ph ph-warning-circle metric-icon" style="color: var(--accent-red); background: rgba(239, 68, 68, 0.1);"></i>
+                    </div>
+                    <div class="metric-value">14</div>
+                    <div class="metric-sub" style="color: var(--accent-red);">Requires attention</div>
+                </div>
+            </section>
+
+            <h2 id="workflow" class="section-title reveal">How VidGram Works</h2>
+            <section class="workflow-container reveal">
+                <div class="workflow-step reveal reveal-delay-1">
+                    <div class="step-icon"><i class="ph ph-database"></i></div>
+                    <div class="step-title">Collect Data</div>
+                    <div class="step-sub">Influencer profiles</div>
+                </div>
+                <div class="workflow-arrow"></div>
+                <div class="workflow-step reveal reveal-delay-2">
+                    <div class="step-icon"><i class="ph ph-eye"></i></div>
+                    <div class="step-title">Detect Fraud</div>
+                    <div class="step-sub">AI signal analysis</div>
+                </div>
+                <div class="workflow-arrow"></div>
+                <div class="workflow-step reveal reveal-delay-3">
+                    <div class="step-icon"><i class="ph ph-chart-bar"></i></div>
+                    <div class="step-title">Generate Score</div>
+                    <div class="step-sub">Authenticity metric</div>
+                </div>
+                <div class="workflow-arrow"></div>
+                <div class="workflow-step reveal reveal-delay-4">
+                    <div class="step-icon"><i class="ph ph-calculator"></i></div>
+                    <div class="step-title">Calculate Risk</div>
+                    <div class="step-sub">Campaign impact</div>
+                </div>
+                <div class="workflow-arrow"></div>
+                <div class="workflow-step reveal reveal-delay-5">
+                    <div class="step-icon"><i class="ph ph-arrows-clockwise"></i></div>
+                    <div class="step-title">Monitor</div>
+                    <div class="step-sub">Continuous tracking</div>
+                </div>
+                <div class="workflow-arrow"></div>
+                <div class="workflow-step reveal reveal-delay-5">
+                    <div class="step-icon"><i class="ph ph-bell-ringing"></i></div>
+                    <div class="step-title">Alert & Report</div>
+                    <div class="step-sub">Real-time updates</div>
+                </div>
+            </section>
+
+            <h2 id="features" class="section-title reveal">Core Features</h2>
+            <section class="features-grid">
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-header">
+                        <span class="feature-emoji"></span>
+                        <h3 class="feature-title">Analyze Influencer</h3>
+                        <p class="feature-desc">Evaluate influencer authenticity and audience quality.</p>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Deep Engagement Analysis</li>
+                        <li>Audience Demographics Check</li>
+                        <li>Comment Quality Detection</li>
+                    </ul>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-header">
+                        <span class="feature-emoji"></span>
+                        <h3 class="feature-title">Campaign Monitor</h3>
+                        <p class="feature-desc">Continuously track campaign performance and health.</p>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Continuous Live Tracking</li>
+                        <li>Campaign Health Monitoring</li>
+                        <li>Real-time Metric Updates</li>
+                    </ul>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-header">
+                        <span class="feature-emoji"></span>
+                        <h3 class="feature-title">Risk Alerts</h3>
+                        <p class="feature-desc">Detect suspicious activity before it impacts campaigns.</p>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Follower Spike Detection</li>
+                        <li>Engagement Anomaly Detection</li>
+                        <li>Instant Notification System</li>
+                    </ul>
+                </div>
+                <div class="feature-card reveal reveal-delay-4">
+                    <div class="feature-header">
+                        <span class="feature-emoji"></span>
+                        <h3 class="feature-title">Authenticity Timeline</h3>
+                        <p class="feature-desc">Visualize authenticity trends and score changes.</p>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Historical Score Tracking</li>
+                        <li>Authenticity Drift Detection</li>
+                        <li>Trend Forecasting</li>
+                    </ul>
+                </div>
+                <div class="feature-card reveal reveal-delay-5">
+                    <div class="feature-header">
+                        <span class="feature-emoji"></span>
+                        <h3 class="feature-title">Budget Simulator</h3>
+                        <p class="feature-desc">Estimate genuine reach and potential budget loss.</p>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Genuine Reach Calculation</li>
+                        <li>Budget Risk Estimation</li>
+                        <li>ROI Forecasting</li>
+                    </ul>
+                </div>
+                <div class="feature-card reveal reveal-delay-5">
+                    <div class="feature-header">
+                        <span class="feature-emoji"></span>
+                        <h3 class="feature-title">Reports</h3>
+                        <p class="feature-desc">Generate detailed campaign intelligence reports.</p>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Exportable PDF Reports</li>
+                        <li>Campaign Intelligence Summary</li>
+                        <li>White-label Options</li>
+                    </ul>
+                </div>
+            </section>
+
+            <footer class="reveal">
+                <p>From Follower Counts to Genuine Influence</p>
+                <p style="margin-top: 0.5rem; opacity: 0.6; font-size: 0.8rem;">&copy; 2026 VidGram Analytics. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('mainSidebar');
+            const logoToggle = document.getElementById('logoToggle');
+            const mainContent = document.querySelector('.main-content');
+
+            if (sidebar && mainContent) {
+                mainContent.style.marginLeft = '80px';
+
+                sidebar.addEventListener('mouseenter', () => {
+                    if (!sidebar.classList.contains('pinned')) {
+                        mainContent.style.marginLeft = 'var(--sidebar-width)';
+                    }
+                });
+
+                sidebar.addEventListener('mouseleave', () => {
+                    if (!sidebar.classList.contains('pinned')) {
+                        mainContent.style.marginLeft = '80px';
+                    }
+                });
+
+                if (logoToggle) {
+                    logoToggle.addEventListener('click', () => {
+                        sidebar.classList.toggle('pinned');
+                        if (sidebar.classList.contains('pinned')) {
+                            mainContent.style.marginLeft = 'var(--sidebar-width)';
+                        } else {
+                            mainContent.style.marginLeft = '80px';
+                        }
+                    });
+                }
+            }
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                revealObserver.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidGram - Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-main: #f0f6ff;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-card-hover: rgba(255, 255, 255, 0.9);
+            --primary-gradient: linear-gradient(135deg, #00b4d8 0%, #009ae0 100%);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: rgba(59, 130, 246, 0.15);
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #2563eb;
+            --accent-yellow: #f59e0b;
+            --glass-blur: blur(20px);
+            --sidebar-width: 260px;
+            --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Sora', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
+                linear-gradient(135deg, #e0f2fe 0%, #f8fafc 50%, #eff6ff 100%);
+        }
+
+        .scroll-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 80px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: width 0.3s ease;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover, .sidebar.pinned {
+            width: var(--sidebar-width);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 80px;
+            padding: 2rem;
+            max-width: 1600px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.pinned + .main-content {
+            margin-left: var(--sidebar-width);
+        }
+
+        .logo {
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .sidebar-logo {
+            width: 55px;
+            height: auto;
+            border-radius: 8px;
+            transition: width 0.3s ease, margin-left 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-logo, .sidebar.pinned .sidebar-logo {
+            width: 180px;
+        }
+
+        .sidebar:hover .logo, .sidebar.pinned .logo {
+            justify-content: center;
+        }
+
+        .menu {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .menu-link i {
+            font-size: 1.25rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .menu-text {
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: inline-block;
+        }
+
+        .sidebar:hover .menu-text, .sidebar.pinned .menu-text {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .user-profile div {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar:hover .user-profile div, .sidebar.pinned .user-profile div {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .menu-link:hover {
+            background: transparent;
+            color: #009ae0;
+        }
+
+        .menu-link:hover i {
+            color: #009ae0;
+            filter: drop-shadow(0 0 4px rgba(0, 154, 224, 0.4));
+        }
+
+        .menu-link:active {
+            color: #009ae0;
+        }
+
+        .menu-link.active {
+            background: transparent;
+            color: #009ae0;
+            font-weight: 600;
+        }
+
+        .menu-link.active i {
+            color: #009ae0;
+            filter: drop-shadow(0 0 4px rgba(0, 154, 224, 0.5));
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1600px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 300px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            outline: none;
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-card);
+            transition: background 0.3s ease;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .profile-info h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-text {
+            background: none;
+            border: none;
+            color: #009ae0;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .btn-text:hover {
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border-color);
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-size: 0.95rem;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Sora', sans-serif;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.05);
+        }
+
+        .toggle-group:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .toggle-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+
+        .toggle-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        input:checked + .slider {
+            background: var(--primary-gradient);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .threshold-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .threshold-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .threshold-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .threshold-label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .threshold-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.1rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .range-track {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 5px;
+            background: #e2e8f0;
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .range-track::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--accent-blue);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .range-track::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .range-track::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--accent-blue);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .theme-card {
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.5);
+        }
+
+        .theme-card.active {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .theme-card:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .theme-preview {
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .theme-preview-light {
+            background: #f0f6ff;
+            border: 1px solid #e2e8f0;
+        }
+
+        .theme-preview-light div {
+            background: white;
+            height: 100%;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .theme-preview-dark {
+            background: #0f172a;
+            border: 1px solid #334155;
+        }
+
+        .theme-preview-dark div {
+            background: #1e293b;
+            height: 100%;
+            border-right: 1px solid #334155;
+        }
+
+        .theme-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+        .reveal-delay-5 { transition-delay: 0.5s; }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .settings-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-container">
+        <aside class="sidebar" id="mainSidebar">
+            <div class="logo" id="logoToggle">
+                <img src="logo.jpeg" alt="VG" class="sidebar-logo">
+            </div>
+            <ul class="menu">
+                <li class="menu-item"><a href="index.html" class="menu-link"><i class="ph ph-squares-four"></i><span class="menu-text">Dashboard</span></a></li>
+                <li class="menu-item"><a href="analyze.html" class="menu-link"><i class="ph ph-magnifying-glass"></i><span class="menu-text">Analyze Influencer</span></a></li>
+                <li class="menu-item"><a href="monitor.html" class="menu-link"><i class="ph ph-activity"></i><span class="menu-text">Campaign Monitor</span></a></li>
+                <li class="menu-item"><a href="alerts.html" class="menu-link"><i class="ph ph-warning-circle"></i><span class="menu-text">Risk Alerts</span></a></li>
+                <li class="menu-item"><a href="timeline.html" class="menu-link"><i class="ph ph-clock-counter-clockwise"></i><span class="menu-text">Authenticity Timeline</span></a></li>
+                <li class="menu-item"><a href="budget.html" class="menu-link"><i class="ph ph-wallet"></i><span class="menu-text">Budget Simulator</span></a></li>
+                <li class="menu-item"><a href="reports.html" class="menu-link"><i class="ph ph-file-text"></i><span class="menu-text">Reports</span></a></li>
+                <li class="menu-item"><a href="settings.html" class="menu-link active"><i class="ph ph-gear"></i><span class="menu-text">Settings</span></a></li>
+            </ul>
+            <div class="user-profile">
+                <img src="https://picsum.photos/seed/vidgramuser/100/100" alt="User" class="avatar">
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Alex Morgan</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Brand Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <nav class="navbar reveal">
+                <div class="search-bar">
+                    <i class="ph ph-magnifying-glass" style="color: var(--text-muted);"></i>
+                    <input type="text" placeholder="Jump to...">
+                </div>
+                <div class="nav-actions">
+                    <button class="icon-btn">
+                        <i class="ph ph-bell"></i>
+                        <span class="badge"></span>
+                    </button>
+                    <img src="https://picsum.photos/seed/vidgramuser/100/100" alt="Profile" class="avatar" style="cursor: pointer;">
+                </div>
+            </nav>
+
+            <header class="page-header reveal">
+                <h1 class="page-title">Settings</h1>
+            </header>
+
+            <section class="settings-grid">
+                <div class="card reveal reveal-delay-1">
+                    <h2 class="section-title"><i class="ph ph-user-circle"></i> Profile Settings</h2>
+                    <div class="profile-header">
+                        <img src="https://picsum.photos/seed/vidgramuser/200/200" alt="Profile" class="profile-avatar">
+                        <div class="profile-info">
+                            <h3>Alex Morgan</h3>
+                            <p>alex.morgan@brand.com</p>
+                            <button class="btn-text">Change Photo</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" value="Alex Morgan">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" value="alex.morgan@brand.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Company Name</label>
+                        <input type="text" class="form-input" value="Acme Marketing Corp">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Job Role</label>
+                        <input type="text" class="form-input" value="Brand Manager">
+                    </div>
+                    <button class="btn-primary" id="saveProfileBtn">Save Profile</button>
+                </div>
+
+                <div class="card reveal reveal-delay-2">
+                    <h2 class="section-title"><i class="ph ph-bell-ringing"></i> Notification Settings</h2>
+                    
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Email Notifications</h4>
+                            <p>Receive alerts directly to your email</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>SMS Alerts</h4>
+                            <p>Get text messages for critical risks</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Push Notifications</h4>
+                            <p>Browser notifications for real-time updates</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Weekly Report Digest</h4>
+                            <p>Summary of all campaigns every Monday</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Budget Loss Warnings</h4>
+                            <p>Alert when estimated loss exceeds threshold</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card reveal reveal-delay-3">
+                    <h2 class="section-title"><i class="ph ph-sliders-horizontal"></i> Alert Thresholds</h2>
+                    
+                    <div class="threshold-item">
+                        <div class="threshold-header">
+                            <span class="threshold-label">Follower Spike Detection</span>
+                            <span class="threshold-value" id="valSpike">150%</span>
+                        </div>
+                        <input type="range" min="50" max="500" value="150" class="range-track" id="rangeSpike">
+                    </div>
+
+                    <div class="threshold-item">
+                        <div class="threshold-header">
+                            <span class="threshold-label">Engagement Drop Alert</span>
+                            <span class="threshold-value" id="valEngage">30%</span>
+                        </div>
+                        <input type="range" min="5" max="80" value="30" class="range-track" id="rangeEngage">
+                    </div>
+
+                    <div class="threshold-item">
+                        <div class="threshold-header">
+                            <span class="threshold-label">Authenticity Score Drop</span>
+                            <span class="threshold-value" id="valAuth">5 Pts</span>
+                        </div>
+                        <input type="range" min="1" max="20" value="5" class="range-track" id="rangeAuth">
+                    </div>
+
+                    <div class="threshold-item">
+                        <div class="threshold-header">
+                            <span class="threshold-label">Bot Comment Threshold</span>
+                            <span class="threshold-value" id="valBot">10%</span>
+                        </div>
+                        <input type="range" min="1" max="50" value="10" class="range-track" id="rangeBot">
+                    </div>
+
+                    <button class="btn-primary" id="saveThresholdsBtn" style="width: 100%; margin-top: 1.5rem;">Save Thresholds</button>
+                </div>
+
+                <div class="card reveal reveal-delay-4">
+                    <h2 class="section-title"><i class="ph ph-palette"></i> Theme Settings</h2>
+                    
+                    <div class="theme-options">
+                        <div class="theme-card active" data-theme="light">
+                            <div class="theme-preview theme-preview-light">
+                                <div style="width: 25%;"></div>
+                                <div style="width: 75%;"></div>
+                            </div>
+                            <div class="theme-name">Light Mode</div>
+                        </div>
+                        <div class="theme-card" data-theme="dark">
+                            <div class="theme-preview theme-preview-dark">
+                                <div style="width: 25%;"></div>
+                                <div style="width: 75%;"></div>
+                            </div>
+                            <div class="theme-name">Dark Mode</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Sidebar Behavior</label>
+                        <select class="form-input" style="cursor: pointer;">
+                            <option>Always Visible</option>
+                            <option>Auto-hide on Mobile</option>
+                            <option>Collapsed by Default</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" id="saveThemeBtn" style="width: 100%;">Apply Preferences</button>
+                </div>
+            </section>
+
+            <footer class="reveal">
+                <p>From Follower Counts to Genuine Influence</p>
+                <p style="margin-top: 0.5rem; opacity: 0.6; font-size: 0.8rem;">&copy; 2023 VidGram Analytics. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Sidebar hover/pin logic
+            const sidebar = document.getElementById('mainSidebar');
+            const logoToggle = document.getElementById('logoToggle');
+            const mainContent = document.querySelector('.main-content');
+
+            if (sidebar && mainContent) {
+                // Set initial margin
+                mainContent.style.marginLeft = '80px';
+
+                sidebar.addEventListener('mouseenter', () => {
+                    if (!sidebar.classList.contains('pinned')) {
+                        mainContent.style.marginLeft = 'var(--sidebar-width)';
+                    }
+                });
+
+                sidebar.addEventListener('mouseleave', () => {
+                    if (!sidebar.classList.contains('pinned')) {
+                        mainContent.style.marginLeft = '80px';
+                    }
+                });
+
+                if (logoToggle) {
+                    logoToggle.addEventListener('click', () => {
+                        sidebar.classList.toggle('pinned');
+                        if (sidebar.classList.contains('pinned')) {
+                            mainContent.style.marginLeft = 'var(--sidebar-width)';
+                        } else {
+                            mainContent.style.marginLeft = '80px';
+                        }
+                    });
+                }
+            }
+
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                revealObserver.observe(el);
+            });
+        });
+
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.textContent = message;
+            Object.assign(notif.style, {
+                position: 'fixed',
+                bottom: '2rem',
+                right: '2rem',
+                background: 'white',
+                color: 'var(--text-main)',
+                padding: '1rem 1.5rem',
+                borderRadius: '12px',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                border: '1px solid var(--border-color)',
+                fontWeight: '600',
+                zIndex: '9999',
+                transform: 'translateY(20px)',
+                opacity: '0',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+            });
+            
+            const icon = document.createElement('i');
+            icon.className = 'ph ph-check-circle';
+            icon.style.color = 'var(--accent-green)';
+            icon.style.fontSize = '1.25rem';
+            notif.prepend(icon);
+
+            document.body.appendChild(notif);
+
+            requestAnimationFrame(() => {
+                notif.style.transform = 'translateY(0)';
+                notif.style.opacity = '1';
+            });
+
+            setTimeout(() => {
+                notif.style.transform = 'translateY(20px)';
+                notif.style.opacity = '0';
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
+
+        document.getElementById('saveProfileBtn').addEventListener('click', () => {
+            showNotification('Profile updated successfully');
+        });
+
+        document.getElementById('saveThresholdsBtn').addEventListener('click', () => {
+            showNotification('Alert thresholds saved');
+        });
+
+        document.getElementById('saveThemeBtn').addEventListener('click', () => {
+            showNotification('Theme preferences applied');
+        });
+
+        const rangeSpike = document.getElementById('rangeSpike');
+        const rangeEngage = document.getElementById('rangeEngage');
+        const rangeAuth = document.getElementById('rangeAuth');
+        const rangeBot = document.getElementById('rangeBot');
+
+        rangeSpike.addEventListener('input', (e) => {
+            document.getElementById('valSpike').textContent = e.target.value + '%';
+        });
+
+        rangeEngage.addEventListener('input', (e) => {
+            document.getElementById('valEngage').textContent = e.target.value + '%';
+        });
+
+        rangeAuth.addEventListener('input', (e) => {
+            document.getElementById('valAuth').textContent = e.target.value + ' Pts';
+        });
+
+        rangeBot.addEventListener('input', (e) => {
+            document.getElementById('valBot').textContent = e.target.value + '%';
+        });
+
+        const themeCards = document.querySelectorAll('.theme-card');
+        themeCards.forEach(card => {
+            card.addEventListener('click', () => {
+                themeCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

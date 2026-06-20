@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidGram - Campaign Monitor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-main: #f0f6ff;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-card-hover: rgba(255, 255, 255, 0.9);
+            --primary-gradient: linear-gradient(135deg, #00b4d8 0%, #009ae0 100%);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: rgba(59, 130, 246, 0.15);
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #2563eb;
+            --accent-yellow: #f59e0b;
+            --glass-blur: blur(20px);
+            --sidebar-width: 260px;
+            --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Sora', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
+                linear-gradient(135deg, #e0f2fe 0%, #f8fafc 50%, #eff6ff 100%);
+        }
+
+        .scroll-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 80px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: width 0.3s ease;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover, .sidebar.pinned {
+            width: var(--sidebar-width);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 80px;
+            padding: 2rem;
+            max-width: 1600px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.pinned + .main-content {
+            margin-left: var(--sidebar-width);
+        }
+
+        .logo {
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .sidebar-logo {
+            width: 55px;
+            height: auto;
+            border-radius: 8px;
+            transition: width 0.3s ease, margin-left 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-logo, .sidebar.pinned .sidebar-logo {
+            width: 180px;
+        }
+
+        .sidebar:hover .logo, .sidebar.pinned .logo {
+            justify-content: center;
+        }
+
+        .menu {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .menu-link i {
+            font-size: 1.25rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .menu-text {
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: inline-block;
+        }
+
+        .sidebar:hover .menu-text, .sidebar.pinned .menu-text {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .user-profile div {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar:hover .user-profile div, .sidebar.pinned .user-profile div {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .menu-link:hover {
+            background: transparent;
+            color: #009ae0;
+        }
+
+        .menu-link:hover i {
+            color: #009ae0;
+            filter: drop-shadow(0 0 4px rgba(0, 154, 224, 0.4));
+        }
+
+        .menu-link:active {
+            color: #009ae0;
+        }
+
+        .menu-link.active {
+            background: transparent;
+            color: #009ae0;
+            font-weight: 600;
+        }
+
+        .menu-link.active i {
+            color: #009ae0;
+            filter: drop-shadow(0 0 4px rgba(0, 154, 224, 0.5));
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1600px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 300px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            outline: none;
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+            transition: background 0.3s ease;
+            overflow-x: auto;
+        }
+
+        .monitor-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .monitor-table th {
+            text-align: left;
+            padding: 1rem 1.25rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .monitor-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.05);
+            vertical-align: middle;
+        }
+
+        .monitor-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .monitor-table tbody tr:hover {
+            background: rgba(59, 130, 246, 0.03);
+        }
+
+        .influencer-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .influencer-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .influencer-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .influencer-info span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .score-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .score-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            min-width: 45px;
+        }
+
+        .score-bar-bg {
+            width: 100px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .risk-badge {
+            padding: 0.3rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .risk-low { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); }
+        .risk-med { background: rgba(245, 158, 11, 0.1); color: var(--accent-yellow); }
+        .risk-high { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            white-space: nowrap;
+        }
+
+        .status-pill.paused {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent-yellow);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-pill:not(.paused) .status-dot {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .sparkline-svg {
+            width: 100px;
+            height: 32px;
+            overflow: visible;
+        }
+
+        .sparkline-path {
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+        .reveal-delay-5 { transition-delay: 0.5s; }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-container">
+        <aside class="sidebar" id="mainSidebar">
+            <div class="logo" id="logoToggle">
+                <img src="logo.jpeg" alt="VG" class="sidebar-logo">
+            </div>
+            <ul class="menu">
+                <li class="menu-item"><a href="index.html" class="menu-link"><i class="ph ph-squares-four"></i><span class="menu-text">Dashboard</span></a></li>
+                <li class="menu-item"><a href="analyze.html" class="menu-link"><i class="ph ph-magnifying-glass"></i><span class="menu-text">Analyze Influencer</span></a></li>
+                <li class="menu-item"><a href="monitor.html" class="menu-link active"><i class="ph ph-activity"></i><span class="menu-text">Campaign Monitor</span></a></li>
+                <li class="menu-item"><a href="alerts.html" class="menu-link"><i class="ph ph-warning-circle"></i><span class="menu-text">Risk Alerts</span></a></li>
+                <li class="menu-item"><a href="timeline.html" class="menu-link"><i class="ph ph-clock-counter-clockwise"></i><span class="menu-text">Authenticity Timeline</span></a></li>
+                <li class="menu-item"><a href="budget.html" class="menu-link"><i class="ph ph-wallet"></i><span class="menu-text">Budget Simulator</span></a></li>
+                <li class="menu-item"><a href="reports.html" class="menu-link"><i class="ph ph-file-text"></i><span class="menu-text">Reports</span></a></li>
+                <li class="menu-item"><a href="settings.html" class="menu-link"><i class="ph ph-gear"></i><span class="menu-text">Settings</span></a></li>
+            </ul>
+            <div class="user-profile">
+                <img src="https://picsum.photos/seed/vidgramuser/100/100" alt="User" class="avatar">
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Alex Morgan</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Brand Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <nav class="navbar reveal">
+                <div class="search-bar">
+                    <i class="ph ph-magnifying-glass" style="color: var(--text-muted);"></i>
+                    <input type="text" placeholder="Jump to...">
+                </div>
+                <div class="nav-actions">
+                    <button class="icon-btn">
+                        <i class="ph ph-bell"></i>
+                        <span class="badge"></span>
+                    </button>
+                    <img src="https://picsum.photos/seed/vidgramuser/100/100" alt="Profile" class="avatar" style="cursor: pointer;">
+                </div>
+            </nav>
+
+            <header class="page-header reveal">
+                <h1 class="page-title">Campaign Monitor</h1>
+                <button class="btn-primary">
+                    <i class="ph ph-plus-circle"></i> Add Influencer
+                </button>
+            </header>
+
+            <section class="card reveal">
+                <table class="monitor-table">
+                    <thead>
+                        <tr>
+                            <th>Monitored Influencers</th>
+                            <th>Authenticity Score</th>
+                            <th>Risk Status</th>
+                            <th>Monitoring Status</th>
+                            <th>Score Changes (7d)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monitorTableBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <footer class="reveal">
+                <p>From Follower Counts to Genuine Influence</p>
+                <p style="margin-top: 0.5rem; opacity: 0.6; font-size: 0.8rem;">&copy; 2023 VidGram Analytics. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Sidebar hover/pin logic
+            const sidebar = document.getElementById('mainSidebar');
+            const logoToggle = document.getElementById('logoToggle');
+            const mainContent = document.querySelector('.main-content');
+
+            if (sidebar && mainContent) {
+                // Set initial margin
+                mainContent.style.marginLeft = '80px';
+
+                sidebar.addEventListener('mouseenter', () => {
+                    if (!sidebar.classList.contains('pinned')) {
+                        mainContent.style.marginLeft = 'var(--sidebar-width)';
+                    }
+                });
+
+                sidebar.addEventListener('mouseleave', () => {
+                    if (!sidebar.classList.contains('pinned')) {
+                        mainContent.style.marginLeft = '80px';
+                    }
+                });
+
+                if (logoToggle) {
+                    logoToggle.addEventListener('click', () => {
+                        sidebar.classList.toggle('pinned');
+                        if (sidebar.classList.contains('pinned')) {
+                            mainContent.style.marginLeft = 'var(--sidebar-width)';
+                        } else {
+                            mainContent.style.marginLeft = '80px';
+                        }
+                    });
+                }
+            }
+
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            const influencers = [
+                {
+                    name: "Ria Sharma",
+                    handle: "@travel_with_ria",
+                    img: "https://picsum.photos/seed/ria1/100/100",
+                    score: 92,
+                    risk: "low",
+                    status: "active",
+                    history: [88, 89, 90, 90, 91, 91, 92]
+                },
+                {
+                    name: "Arjun Patel",
+                    handle: "@tech_guru_01",
+                    img: "https://picsum.photos/seed/arjun2/100/100",
+                    score: 78,
+                    risk: "med",
+                    status: "active",
+                    history: [85, 84, 82, 80, 79, 78, 78]
+                },
+                {
+                    name: "Joe Walker",
+                    handle: "@fit_life_joe",
+                    img: "https://picsum.photos/seed/joe3/100/100",
+                    score: 45,
+                    risk: "high",
+                    status: "paused",
+                    history: [72, 68, 60, 55, 50, 48, 45]
+                },
+                {
+                    name: "Priya Singh",
+                    handle: "@beauty_queen99",
+                    img: "https://picsum.photos/seed/priya4/100/100",
+                    score: 88,
+                    risk: "low",
+                    status: "active",
+                    history: [86, 87, 87, 88, 88, 88, 88]
+                },
+                {
+                    name: "Vikram Mehta",
+                    handle: "@foodie_vik",
+                    img: "https://picsum.photos/seed/vikram5/100/100",
+                    score: 65,
+                    risk: "med",
+                    status: "active",
+                    history: [70, 68, 68, 66, 65, 65, 65]
+                }
+            ];
+
+            function generateSparkline(data, color) {
+                const width = 100;
+                const height = 32;
+                const padding = 4;
+                const min = Math.min(...data) - 5;
+                const max = Math.max(...data) + 5;
+                const range = max - min || 1;
+
+                const points = data.map((val, i) => {
+                    const x = padding + (i / (data.length - 1)) * (width - padding * 2);
+                    const y = height - padding - ((val - min) / range) * (height - padding * 2);
+                    return `${x},${y}`;
+                }).join(" ");
+
+                return `<svg class="sparkline-svg" viewBox="0 0 ${width} ${height}">
+                            <polyline points="${points}" class="sparkline-path" stroke="${color}" />
+                        </svg>`;
+            }
+
+            function getScoreColor(score) {
+                if (score >= 80) return "var(--accent-green)";
+                if (score >= 60) return "var(--accent-yellow)";
+                return "var(--accent-red)";
+            }
+
+            function getRiskBadge(risk) {
+                const config = {
+                    low: { class: "risk-low", text: "Low Risk" },
+                    med: { class: "risk-med", text: "Medium Risk" },
+                    high: { class: "risk-high", text: "High Risk" }
+                };
+                const r = config[risk];
+                return `<span class="risk-badge ${r.class}">${r.text}</span>`;
+            }
+
+            function getStatusPill(status) {
+                if (status === "active") {
+                    return `<span class="status-pill"><span class="status-dot"></span> Active</span>`;
+                }
+                return `<span class="status-pill paused"><span class="status-dot"></span> Paused</span>`;
+            }
+
+            const tableBody = document.getElementById("monitorTableBody");
+            const delays = ['reveal-delay-1', 'reveal-delay-2', 'reveal-delay-3', 'reveal-delay-4', 'reveal-delay-5'];
+
+            influencers.forEach((inf, index) => {
+                const color = getScoreColor(inf.score);
+                const row = document.createElement("tr");
+                row.classList.add('reveal', delays[index] || '');
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="influencer-cell">
+                            <img src="${inf.img}" alt="${inf.name}" class="influencer-avatar">
+                            <div class="influencer-info">
+                                <h4>${inf.name}</h4>
+                                <span>${inf.handle}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="score-container">
+                            <span class="score-text" style="color: ${color}">${inf.score}/100</span>
+                            <div class="score-bar-bg">
+                                <div class="score-bar-fill" style="width: ${inf.score}%; background: ${color};"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${getRiskBadge(inf.risk)}</td>
+                    <td>${getStatusPill(inf.status)}</td>
+                    <td>${generateSparkline(inf.history, color)}</td>
+                `;
+                
+                tableBody.appendChild(row);
+                revealObserver.observe(row);
+            });
+        });
+    </script>
+</body>
+</html>

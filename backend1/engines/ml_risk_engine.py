@@ -10,8 +10,8 @@ from __future__ import annotations
 import math
 from typing import Any
 
-from team_member_2.schemas import DetectorResult
-from team_member_2.utils.math_utils import as_number, clamp
+from schemas import DetectorResult
+from utils.math_utils import as_number, clamp
 
 
 class MLRiskEngine:

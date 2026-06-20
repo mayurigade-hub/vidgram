@@ -5,9 +5,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from team_member_2.engines.scoring_engine import ScoringEngine
-from team_member_2.normalization import normalize_creator_payload
-from team_member_2.schemas import ScoringResult
+from engines.scoring_engine import ScoringEngine
+from normalization import normalize_creator_payload
+from schemas import ScoringResult
 
 PUBLIC_OUTPUT_KEYS = (
     "authenticity_score",

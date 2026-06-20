@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from team_member_2.detectors.base import BaseDetector
-from team_member_2.schemas import DetectorResult, InfluencerData
-from team_member_2.utils.math_utils import score_from_penalty
-from team_member_2.utils.text_utils import duplicate_ratio, spam_ratio
+from detectors.base import BaseDetector
+from schemas import DetectorResult, InfluencerData
+from utils.math_utils import score_from_penalty
+from utils.text_utils import duplicate_ratio, spam_ratio
 
 
 class CommentDetector(BaseDetector):

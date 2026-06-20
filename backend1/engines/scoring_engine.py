@@ -4,21 +4,21 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from team_member_2.detectors import (
+from detectors import (
     AudienceQualityDetector,
     CommentDetector,
     ConsistencyDetector,
     EngagementDetector,
     GrowthDetector,
 )
-from team_member_2.detectors.base import BaseDetector
-from team_member_2.engines.alert_engine import AlertEngine
-from team_member_2.engines.campaign_risk_engine import CampaignRiskEngine
-from team_member_2.engines.evidence_engine import EvidenceEngine
-from team_member_2.engines.ml_risk_engine import MLRiskEngine
-from team_member_2.engines.risk_engine import RiskEngine
-from team_member_2.schemas import DetectorResult, InfluencerData, ScoringResult
-from team_member_2.utils.math_utils import clamp
+from detectors.base import BaseDetector
+from engines.alert_engine import AlertEngine
+from engines.campaign_risk_engine import CampaignRiskEngine
+from engines.evidence_engine import EvidenceEngine
+from engines.ml_risk_engine import MLRiskEngine
+from engines.risk_engine import RiskEngine
+from schemas import DetectorResult, InfluencerData, ScoringResult
+from utils.math_utils import clamp
 
 
 class ScoringEngine:

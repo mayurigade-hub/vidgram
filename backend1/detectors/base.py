@@ -5,8 +5,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
 
-from team_member_2.schemas import DetectorResult, InfluencerData
-from team_member_2.utils.math_utils import clamp
+from schemas import DetectorResult, InfluencerData
+from utils.math_utils import clamp
 
 
 class BaseDetector(ABC):

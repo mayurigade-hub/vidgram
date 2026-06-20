@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from team_member_2.api import required_input_fields, score_influencer_payload
+from api import required_input_fields, score_influencer_payload
 
 ROOT = Path(__file__).resolve().parents[1]
 

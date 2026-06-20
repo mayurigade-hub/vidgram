@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from team_member_2.detectors import (
+from detectors import (
     AudienceQualityDetector,
     CommentDetector,
     ConsistencyDetector,

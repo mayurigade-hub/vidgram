@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from team_member_2.engines.risk_engine import RiskEngine
-from team_member_2.engines.scoring_engine import ScoringEngine
+from engines.risk_engine import RiskEngine
+from engines.scoring_engine import ScoringEngine
 
 ROOT = Path(__file__).resolve().parents[1]
 

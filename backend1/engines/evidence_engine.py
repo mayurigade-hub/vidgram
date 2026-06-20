@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from team_member_2.schemas import DetectorResult
+from schemas import DetectorResult
 
 
 class EvidenceEngine:

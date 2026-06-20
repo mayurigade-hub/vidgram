@@ -5,8 +5,8 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from team_member_2.schemas import InfluencerData
-from team_member_2.utils.math_utils import as_number, safe_divide
+from schemas import InfluencerData
+from utils.math_utils import as_number, safe_divide
 
 
 def normalize_creator_payload(payload: Mapping[str, Any]) -> tuple[InfluencerData, list[str]]:

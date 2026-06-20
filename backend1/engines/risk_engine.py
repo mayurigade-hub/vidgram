@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from team_member_2.schemas.influencer import RiskLevel
+from schemas.influencer import RiskLevel
 
 
 class RiskEngine:

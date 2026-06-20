@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from team_member_2.schemas import DetectorResult, InfluencerData
-from team_member_2.utils.math_utils import as_number, clamp, safe_divide
+from schemas import DetectorResult, InfluencerData
+from utils.math_utils import as_number, clamp, safe_divide
 
 
 class CampaignRiskEngine:

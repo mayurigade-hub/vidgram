@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from team_member_2.schemas import DetectorResult, InfluencerData
-from team_member_2.utils.math_utils import as_number
+from schemas import DetectorResult, InfluencerData
+from utils.math_utils import as_number
 
 
 class AlertEngine:

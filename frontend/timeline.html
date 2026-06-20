@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidGram - Authenticity Timeline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-main: #f0f6ff;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-card-hover: rgba(255, 255, 255, 0.9);
+            --primary-gradient: linear-gradient(135deg, #00b4d8 0%, #009ae0 100%);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: rgba(59, 130, 246, 0.15);
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #2563eb;
+            --accent-yellow: #f59e0b;
+            --glass-blur: blur(20px);
+            --sidebar-width: 260px;
+            --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Sora', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
+                linear-gradient(135deg, #e0f2fe 0%, #f8fafc 50%, #eff6ff 100%);
+        }
+
+        .scroll-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 80px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: width 0.3s ease;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover, .sidebar.pinned {
+            width: var(--sidebar-width);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 80px;
+            padding: 2rem;
+            max-width: 1600px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.pinned + .main-content {
+            margin-left: var(--sidebar-width);
+        }
+
+        .logo {
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .sidebar-logo {
+            width: 55px;
+            height: auto;
+            border-radius: 8px;
+            transition: width 0.3s ease, margin-left 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-logo, .sidebar.pinned .sidebar-logo {
+            width: 180px;
+        }
+
+        .sidebar:hover .logo, .sidebar.pinned .logo {
+            justify-content: center;
+        }
+
+        .menu {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .menu-link i {
+            font-size: 1.25rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .menu-text {
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: inline-block;
+        }
+
+        .sidebar:hover .menu-text, .sidebar.pinned .menu-text {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .user-profile div {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar:hover .user-profile div, .sidebar.pinned .user-profile div {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .menu-link:hover {
+            background: transparent;
+            color: #009ae0;
+        }
+
+        .menu-link:hover i {
+            color: #009ae0;
+            filter: drop-shadow(0 0 4px rgba(0, 154, 224, 0.4));
+        }
+
+        .menu-link:active {
+            color: #009ae0;
+        }
+
+        .menu-link.active {
+            background: transparent;
+            color: #009ae0;
+            font-weight: 600;
+        }
+
+        .menu-link.active i {
+            color: #009ae0;
+            filter: drop-shadow(0 0 4px rgba(0, 154, 224, 0.5));
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1600px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 300px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            outline: none;
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #009ae0;
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .btn-secondary:hover {
+            background: #009ae0;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 350px;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .grid-line {
+            stroke: #e2e8f0;
+            stroke-width: 1;
+            stroke-dasharray: 4 4;
+        }
+
+        .main-line {
+            fill: none;
+            stroke: var(--accent-blue);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.2));
+        }
+
+        .area-fill {
+            fill: url(#blueGradient);
+        }
+
+        .data-dot {
+            fill: white;
+            stroke: var(--accent-blue);
+            stroke-width: 2.5;
+            r: 5;
+            transition: r 0.2s ease;
+            cursor: pointer;
+        }
+
+        .data-dot:hover {
+            r: 7;
+        }
+
+        .risk-marker {
+            fill: var(--accent-red);
+            stroke: white;
+            stroke-width: 2;
+            r: 7;
+            cursor: pointer;
+        }
+
+        .risk-label {
+            position: absolute;
+            background: white;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-red);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            white-space: nowrap;
+            pointer-events: none;
+            transform: translateX(-50%);
+        }
+
+        .y-axis-label {
+            font-size: 0.75rem;
+            fill: var(--text-muted);
+            text-anchor: end;
+            dominant-baseline: middle;
+        }
+
+        .x-axis-label {
+            font-size: 0.75rem;
+            fill: var(--text-muted);
+            text-anchor: middle;
+        }
+
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .day-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .day-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        .day-card.has-event {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.03);
+        }
+
+        .day-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .day-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .day-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+        }
+
+        .change-pos {
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .change-neg {
+            color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .change-zero {
+            color: var(--text-muted);
+            background: #f1f5f9;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.05);
+            font-size: 0.95rem;
+        }
+
+        .history-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .history-table tbody tr:hover {
+            background: rgba(59, 130, 246, 0.03);
+        }
+
+        .event-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+        .reveal-delay-5 { transition-delay: 0.5s; }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .chart-wrapper { height: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-container">
+        <aside class="sidebar" id="mainSidebar">
+            <div class="logo" id="logoToggle">
+                <img src="logo.jpeg" alt="VG" class="sidebar-logo">
+            </div>
+            <ul class="menu">
+                <li class="menu-item"><a href="index.html" class="menu-link"><i class="ph ph-squares-four"></i><span class="menu-text">Dashboard</span></a></li>
+                <li class="menu-item"><a href="analyze.html" class="menu-link"><i class="ph ph-magnifying-glass"></i><span class="menu-text">Analyze Influencer</span></a></li>
+                <li class="menu-item"><a href="monitor.html" class="menu-link"><i class="ph ph-activity"></i><span class="menu-text">Campaign Monitor</span></a></li>
+                <li class="menu-item"><a href="alerts.html" class="menu-link"><i class="ph ph-warning-circle"></i><span class="menu-text">Risk Alerts</span></a></li>
+                <li class="menu-item"><a href="timeline.html" class="menu-link active"><i class="ph ph-clock-counter-clockwise"></i><span class="menu-text">Authenticity Timeline</span></a></li>
+                <li class="menu-item"><a href="budget.html" class="menu-link"><i class="ph ph-wallet"></i><span class="menu-text">Budget Simulator</span></a></li>
+                <li class="menu-item"><a href="reports.html" class="menu-link"><i class="ph ph-file-text"></i><span class="menu-text">Reports</span></a></li>
+                <li class="menu-item"><a href="settings.html" class="menu-link"><i class="ph ph-gear"></i><span class="menu-text">Settings</span></a></li>
+            </ul>
+            <div class="user-profile">
+                <img src="https://picsum.photos/seed/vidgramuser/100/100" alt="User" class="avatar">
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Alex Morgan</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Brand Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <nav class="navbar reveal">
+                <div class="search-bar">
+                    <i class="ph ph-magnifying-glass" style="color: var(--text-muted);"></i>
+                    <input type="text" placeholder="Jump to...">
+                </div>
+                <div class="nav-actions">
+                    <button class="icon-btn">
+                        <i class="ph ph-bell"></i>
+                        <span class="badge"></span>
+                    </button>
+                    <img src="https://picsum.photos/seed/vidgramuser/100/100" alt="Profile" class="avatar" style="cursor: pointer;">
+                </div>
+            </nav>
+
+            <header class="page-header reveal">
+                <h1 class="page-title">Authenticity Timeline</h1>
+                <button class="btn-secondary">
+                    <i class="ph ph-calendar-blank"></i> Last 30 Days
+                </button>
+            </header>
+
+            <section class="card reveal">
+                <div class="chart-header">
+                    <h2 class="section-title"><i class="ph ph-chart-line-up"></i> Authenticity Score Graph</h2>
+                </div>
+                <div class="chart-wrapper" id="chartWrapper">
+                </div>
+            </section>
+
+            <h2 class="section-title reveal" style="margin-bottom: 1.5rem;"><i class="ph ph-calendar-dots"></i> Score Changes Day-by-Day</h2>
+            <section class="day-grid" id="dayGrid" style="margin-bottom: 2rem;">
+            </section>
+
+            <section class="card reveal" style="padding: 0;">
+                <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);">
+                    <h2 class="section-title"><i class="ph ph-clock-counter-clockwise"></i> Historical Data & Risk Events</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="history-table" id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Authenticity Score</th>
+                                <th>Score Change</th>
+                                <th>Risk Event</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="reveal">
+                <p>From Follower Counts to Genuine Influence</p>
+                <p style="margin-top: 0.5rem; opacity: 0.6; font-size: 0.8rem;">&copy; 2023 VidGram Analytics. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        const timelineData = [
+            { date: "Oct 11", score: 88, event: null },
+            { date: "Oct 12", score: 89, event: null },
+            { date: "Oct 13", score: 90, event: null },
+            { date: "Oct 14", score: 90, event: null },
+            { date: "Oct 15", score: 85, event: "Follower Spike Detected" },
+            { date: "Oct 16", score: 82, event: null },
+            { date: "Oct 17", score: 80, event: null },
+            { date: "Oct 18", score: 78, event: "Bot Comments Detected" },
+            { date: "Oct 19", score: 79, event: null },
+            { date: "Oct 20", score: 81, event: null },
+            { date: "Oct 21", score: 83, event: null },
+            { date: "Oct 22", score: 84, event: null },
+            { date: "Oct 23", score: 84, event: null },
+            { date: "Oct 24", score: 84, event: null }
+        ];
+
+        function buildChart() {
+            const wrapper = document.getElementById('chartWrapper');
+            const width = 800;
+            const height = 300;
+            const padding = 40;
+            
+            const minScore = Math.min(...timelineData.map(d => d.score)) - 10;
+            const maxScore = 100;
+            const range = maxScore - minScore;
+
+            const getX = (i) => padding + (i / (timelineData.length - 1)) * (width - padding * 2);
+            const getY = (score) => height - padding - ((score - minScore) / range) * (height - padding * 2);
+
+            let pathD = `M ${getX(0)} ${getY(timelineData[0].score)}`;
+            let areaD = `M ${getX(0)} ${height - padding} L ${getX(0)} ${getY(timelineData[0].score)}`;
+            
+            for (let i = 1; i < timelineData.length; i++) {
+                const x1 = getX(i - 1);
+                const y1 = getY(timelineData[i - 1].score);
+                const x2 = getX(i);
+                const y2 = getY(timelineData[i].score);
+                const cpx1 = x1 + (x2 - x1) / 3;
+                const cpx2 = x2 - (x2 - x1) / 3;
+                
+                pathD += ` C ${cpx1} ${y1}, ${cpx2} ${y2}, ${x2} ${y2}`;
+                areaD += ` C ${cpx1} ${y1}, ${cpx2} ${y2}, ${x2} ${y2}`;
+            }
+            areaD += ` L ${getX(timelineData.length - 1)} ${height - padding} Z`;
+
+            let gridLines = '';
+            let yLabels = '';
+            for (let i = 0; i <= 4; i++) {
+                const score = minScore + (range / 4) * i;
+                const y = getY(score);
+                gridLines += `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" class="grid-line" />`;
+                yLabels += `<text x="${padding - 10}" y="${y}" class="y-axis-label">${Math.round(score)}</text>`;
+            }
+
+            let xLabels = '';
+            timelineData.forEach((d, i) => {
+                if (i % 2 === 0) {
+                    xLabels += `<text x="${getX(i)}" y="${height - 10}" class="x-axis-label">${d.date}</text>`;
+                }
+            });
+
+            let dots = '';
+            let markers = '';
+            timelineData.forEach((d, i) => {
+                const x = getX(i);
+                const y = getY(d.score);
+                
+                if (d.event) {
+                    markers += `<circle cx="${x}" cy="${y}" class="risk-marker" />`;
+                } else {
+                    dots += `<circle cx="${x}" cy="${y}" class="data-dot" />`;
+                }
+            });
+
+            let riskLabelsHTML = '';
+            timelineData.forEach((d, i) => {
+                if (d.event) {
+                    const x = (getX(i) / width) * 100;
+                    const y = (getY(d.score) / height) * 100;
+                    riskLabelsHTML += `<div class="risk-label" style="left: ${x}%; top: ${y - 12}%; transform: translate(-50%, -100%);">${d.event}</div>`;
+                }
+            });
+
+            wrapper.innerHTML = `
+                <svg class="chart-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <linearGradient id="blueGradient" x1="0" x2="0" y1="0" y2="1">
+                            <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.3"/>
+                            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    ${gridLines}
+                    ${yLabels}
+                    ${xLabels}
+                    <path d="${areaD}" class="area-fill" />
+                    <path d="${pathD}" class="main-line" />
+                    ${dots}
+                    ${markers}
+                </svg>
+                ${riskLabelsHTML}
+            `;
+        }
+
+        function buildDayGrid() {
+            const grid = document.getElementById('dayGrid');
+            grid.innerHTML = timelineData.map((d, i) => {
+                const change = i === 0 ? 0 : d.score - timelineData[i - 1].score;
+                let changeClass = 'change-zero';
+                let changeText = '0';
+                
+                if (change > 0) {
+                    changeClass = 'change-pos';
+                    changeText = `+${change}`;
+                } else if (change < 0) {
+                    changeClass = 'change-neg';
+                    changeText = `${change}`;
+                }
+
+                const eventClass = d.event ? 'has-event' : '';
+                const delayClass = i < 5 ? `reveal-delay-${i + 1}` : `reveal-delay-5`;
+
+                return `
+                    <div class="day-card ${eventClass} reveal ${delayClass}">
+                        <div class="day-date">${d.date}</div>
+                        <div class="day-score">${d.score}</div>
+                        <span class="day-change ${changeClass}">${changeText}</span>
+                    </div>
+                `;
+            }).reverse().join('');
+        }
+
+        function buildTable() {
+            const tbody = document.querySelector('#historyTable tbody');
+            tbody.innerHTML = timelineData.map((d, i) => {
+                const change = i === 0 ? 0 : d.score - timelineData[i - 1].score;
+                let changeClass = 'change-zero';
+                let changeText = '0';
+                
+                if (change > 0) {
+                    changeClass = 'change-pos';
+                    changeText = `+${change}`;
+                } else if (change < 0) {
+                    changeClass = 'change-neg';
+                    changeText = `${change}`;
+                }
+
+                const eventHTML = d.event ? `<span class="event-badge"><i class="ph ph-warning-circle"></i> ${d.event}</span>` : `<span style="color: var(--text-muted);">-</span>`;
+                const rowBg = d.event ? 'style="background: rgba(239, 68, 68, 0.03);"' : '';
+
+                return `
+                    <tr ${rowBg}>
+                        <td>${d.date}</td>
+                        <td style="font-weight: 700;">${d.score}/100</td>
+                        <td><span class="day-change ${changeClass}">${changeText}</span></td>
+                        <td>${eventHTML}</td>
+                    </tr>
+                `;
+            }).reverse().join('');
+        }
+
+        buildChart();
+        buildDayGrid();
+        buildTable();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Sidebar hover/pin logic
+            const sidebar = document.getElementById('mainSidebar');
+            const logoToggle = document.getElementById('logoToggle');
+            const mainContent = document.querySelector('.main-content');
+
+            if (sidebar && mainContent) {
+                // Set initial margin
+                mainContent.style.marginLeft = '80px';
+
+                sidebar.addEventListener('mouseenter', () => {
+                    if (!sidebar.classList.contains('pinned')) {
+                        mainContent.style.marginLeft = 'var(--sidebar-width)';
+                    }
+                });
+
+                sidebar.addEventListener('mouseleave', () => {
+                    if (!sidebar.classList.contains('pinned')) {
+                        mainContent.style.marginLeft = '80px';
+                    }
+                });
+
+                if (logoToggle) {
+                    logoToggle.addEventListener('click', () => {
+                        sidebar.classList.toggle('pinned');
+                        if (sidebar.classList.contains('pinned')) {
+                            mainContent.style.marginLeft = 'var(--sidebar-width)';
+                        } else {
+                            mainContent.style.marginLeft = '80px';
+                        }
+                    });
+                }
+            }
+
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                revealObserver.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

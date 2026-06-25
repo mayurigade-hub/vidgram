@@ -12,7 +12,7 @@
 [![HTML5](https://img.shields.io/badge/HTML5-Vanilla_JS-E34F26?style=flat-square&logo=html5&logoColor=white)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](./LICENSE)
 
-[🚀 Getting Started](#getting-started) · [🏗️ Architecture](#architecture) · [✨ Features](#features) · [📸 Screenshots](#screenshots) · [🌐 Live Demo](#live-demo)
+[🚀 Getting Started](#getting-started) · [🏗️ Architecture](#architecture) · [✨ Features](#features) · [📸 Screenshots](#screenshots)
 
 </div>
 
@@ -81,6 +81,7 @@ It then feeds this analysis into a financial calculator to project critical risk
 
 ---
 
+<a name="architecture"></a>
 ## 🏗️ Architecture
 
 ### How the Platform Works

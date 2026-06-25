@@ -476,6 +476,190 @@
             .main-content { margin-left: 0; }
             .page-header { flex-direction: column; align-items: flex-start; }
         }
+
+        /* ── Modal Overlay ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-box {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 24px;
+            padding: 2.5rem 2.5rem 2rem;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 24px 60px rgba(31,38,135,0.18);
+            transform: translateY(32px) scale(0.97);
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease;
+            opacity: 0;
+        }
+        .modal-overlay.open .modal-box {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.75rem;
+        }
+        .modal-header h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .modal-close-btn {
+            background: rgba(100,116,139,0.1);
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s;
+        }
+        .modal-close-btn:hover {
+            background: rgba(239,68,68,0.12);
+            color: var(--accent-red);
+        }
+        .modal-field {
+            margin-bottom: 1.25rem;
+        }
+        .modal-field label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.45rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .modal-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f1f5fb;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.6rem 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .modal-input-wrap:focus-within {
+            border-color: #00b4d8;
+            box-shadow: 0 0 0 3px rgba(0,180,216,0.12);
+        }
+        .modal-input-wrap i {
+            color: #00b4d8;
+            font-size: 1.1rem;
+        }
+        .modal-input-wrap input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-family: 'Sora', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        .modal-input-wrap input::placeholder { color: #94a3b8; }
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.75rem;
+        }
+        .btn-cancel {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-color);
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'Sora', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-cancel:hover { background: #f1f5fb; color: var(--text-main); }
+        .btn-add-confirm {
+            flex: 2;
+            padding: 0.7rem 1.25rem;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary-gradient);
+            color: white;
+            font-family: 'Sora', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+        }
+        .btn-add-confirm:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,180,216,0.35);
+        }
+        .btn-add-confirm:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+        .modal-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2.5px solid rgba(255,255,255,0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+        .btn-add-confirm.loading .modal-spinner { display: block; }
+        .btn-add-confirm.loading .btn-add-label { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .modal-message {
+            font-size: 0.85rem;
+            margin-top: 0.75rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 10px;
+            display: none;
+        }
+        .modal-message.error {
+            display: block;
+            background: rgba(239,68,68,0.08);
+            color: var(--accent-red);
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .modal-message.success {
+            display: block;
+            background: rgba(16,185,129,0.08);
+            color: var(--accent-green);
+            border: 1px solid rgba(16,185,129,0.2);
+        }
     </style>
 </head>
 <body>
@@ -518,7 +702,7 @@
 
             <header class="page-header reveal">
                 <h1 class="page-title">Campaign Monitor</h1>
-                <button class="btn-primary">
+                <button class="btn-primary" id="addInfluencerBtn" onclick="openAddModal()">
                     <i class="ph ph-plus-circle"></i> Add Influencer
                 </button>
             </header>
@@ -544,6 +728,43 @@
                 <p style="margin-top: 0.5rem; opacity: 0.6; font-size: 0.8rem;">&copy; 2023 VidGram Analytics. All rights reserved.</p>
             </footer>
         </main>
+    </div>
+
+    <!-- Add Influencer Modal -->
+    <div class="modal-overlay" id="addInfluencerModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Influencer</h2>
+                <button class="modal-close-btn" onclick="closeAddModal()" aria-label="Close modal">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+
+            <div class="modal-field">
+                <label for="usernameInput">Instagram Username</label>
+                <div class="modal-input-wrap">
+                    <i class="ph ph-at"></i>
+                    <input
+                        type="text"
+                        id="usernameInput"
+                        placeholder="e.g. techplusgadgets"
+                        autocomplete="off"
+                        spellcheck="false"
+                        onkeydown="if(event.key==='Enter') confirmAddInfluencer()"
+                    >
+                </div>
+            </div>
+
+            <div class="modal-message" id="modalMessage"></div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+                <button class="btn-add-confirm" id="confirmAddBtn" onclick="confirmAddInfluencer()">
+                    <span class="modal-spinner"></span>
+                    <span class="btn-add-label"><i class="ph ph-plus"></i> Add &amp; Monitor</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -642,81 +863,174 @@
             }
 
             const usernamesToMonitor = ['dhananjay_tech', 'pallaviyadav_', 'technoruhez', 'techplusgadgets', 'missnidss'];
+            const monitoredSet = new Set(usernamesToMonitor.map(u => u.toLowerCase()));
             const tableBody = document.getElementById("monitorTableBody");
             const delays = ['reveal-delay-1', 'reveal-delay-2', 'reveal-delay-3', 'reveal-delay-4', 'reveal-delay-5'];
 
+            function buildRow(data, index) {
+                const inf = {
+                    name: data.username,
+                    handle: '@' + data.username,
+                    img: `https://picsum.photos/seed/${data.username}/100/100`,
+                    score: data.authenticity_score || Math.floor(Math.random() * 40 + 60),
+                    risk: data.risk_level?.toLowerCase() === 'high' ? 'high' :
+                          (data.risk_level?.toLowerCase() === 'medium' ? 'med' : 'low'),
+                    status: 'active',
+                    history: [data.authenticity_score - 4, data.authenticity_score - 2, data.authenticity_score - 1,
+                              data.authenticity_score, data.authenticity_score, data.authenticity_score, data.authenticity_score]
+                };
+                const color = getScoreColor(inf.score);
+                const row = document.createElement('tr');
+                if (index !== undefined) row.classList.add('reveal', delays[index % delays.length] || '');
+                row.innerHTML = `
+                    <td>
+                        <div class="influencer-cell">
+                            <img src="${inf.img}" alt="${inf.name}" class="influencer-avatar">
+                            <div class="influencer-info">
+                                <h4>${inf.name}</h4>
+                                <span>${inf.handle}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="score-container">
+                            <span class="score-text" style="color: ${color}">${inf.score}/100</span>
+                            <div class="score-bar-bg">
+                                <div class="score-bar-fill" style="width: ${inf.score}%; background: ${color};"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${getRiskBadge(inf.risk)}</td>
+                    <td>${getStatusPill(inf.status)}</td>
+                    <td>${generateSparkline(inf.history, color)}</td>
+                `;
+                return row;
+            }
+
             async function loadMonitoredInfluencers() {
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading data from backend...</td></tr>';
-                
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);"><i class="ph ph-spinner" style="animation: spin 1s linear infinite; display:inline-block; margin-right:0.5rem;"></i>Loading data from backend...</td></tr>';
+
                 try {
                     const results = await Promise.all(
                         usernamesToMonitor.map(async (username) => {
                             try {
                                 const res = await fetch(`http://localhost:8000/api/analyze/${username}`);
-                                if (res.ok) {
-                                    return await res.json();
-                                }
-                            } catch(e) {
-                                console.error(e);
-                            }
+                                if (res.ok) return await res.json();
+                            } catch(e) { console.error(e); }
                             return null;
                         })
                     );
 
                     tableBody.innerHTML = '';
-                    
                     results.forEach((data, index) => {
                         if (!data) return;
-                        
-                        const inf = {
-                            name: data.username,
-                            handle: '@' + data.username,
-                            img: `https://picsum.photos/seed/${data.username}/100/100`,
-                            score: data.authenticity_score || Math.floor(Math.random() * 40 + 60),
-                            risk: data.risk_level?.toLowerCase() === 'high' ? 'high' : 
-                                  (data.risk_level?.toLowerCase() === 'medium' ? 'med' : 'low'),
-                            status: 'active',
-                            history: [data.authenticity_score - 4, data.authenticity_score - 2, data.authenticity_score - 1, data.authenticity_score, data.authenticity_score, data.authenticity_score, data.authenticity_score]
-                        };
-
-                        const color = getScoreColor(inf.score);
-                        const row = document.createElement("tr");
-                        row.classList.add('reveal', delays[index % delays.length] || '');
-                        
-                        row.innerHTML = `
-                            <td>
-                                <div class="influencer-cell">
-                                    <img src="${inf.img}" alt="${inf.name}" class="influencer-avatar">
-                                    <div class="influencer-info">
-                                        <h4>${inf.name}</h4>
-                                        <span>${inf.handle}</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="score-container">
-                                    <span class="score-text" style="color: ${color}">${inf.score}/100</span>
-                                    <div class="score-bar-bg">
-                                        <div class="score-bar-fill" style="width: ${inf.score}%; background: ${color};"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${getRiskBadge(inf.risk)}</td>
-                            <td>${getStatusPill(inf.status)}</td>
-                            <td>${generateSparkline(inf.history, color)}</td>
-                        `;
-                        
+                        const row = buildRow(data, index);
                         tableBody.appendChild(row);
-                        if (window.revealObserver) {
-                            window.revealObserver.observe(row);
-                        }
+                        if (window.revealObserver) window.revealObserver.observe(row);
                     });
                 } catch (error) {
                     console.error(error);
                     tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Failed to load data</td></tr>';
                 }
             }
-            
+
+            // ── Add Influencer Modal logic ──
+            window.openAddModal = function() {
+                const modal = document.getElementById('addInfluencerModal');
+                const input = document.getElementById('usernameInput');
+                const msg   = document.getElementById('modalMessage');
+                input.value = '';
+                msg.className = 'modal-message';
+                msg.textContent = '';
+                modal.classList.add('open');
+                setTimeout(() => input.focus(), 300);
+            };
+
+            window.closeAddModal = function() {
+                document.getElementById('addInfluencerModal').classList.remove('open');
+            };
+
+            // Close on backdrop click
+            document.getElementById('addInfluencerModal').addEventListener('click', function(e) {
+                if (e.target === this) closeAddModal();
+            });
+
+            // Close on Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeAddModal();
+            });
+
+            window.confirmAddInfluencer = async function() {
+                const input  = document.getElementById('usernameInput');
+                const btn    = document.getElementById('confirmAddBtn');
+                const msg    = document.getElementById('modalMessage');
+                const username = input.value.trim().replace(/^@/, '').toLowerCase();
+
+                // Reset message
+                msg.className = 'modal-message';
+                msg.textContent = '';
+
+                if (!username) {
+                    msg.className = 'modal-message error';
+                    msg.textContent = 'Please enter a username.';
+                    input.focus();
+                    return;
+                }
+
+                if (monitoredSet.has(username)) {
+                    msg.className = 'modal-message error';
+                    msg.textContent = `"${username}" is already being monitored.`;
+                    return;
+                }
+
+                // Loading state
+                btn.classList.add('loading');
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch(`http://localhost:8000/api/analyze/${username}`);
+                    if (!res.ok) {
+                        const errText = await res.text();
+                        throw new Error(errText || `HTTP ${res.status}`);
+                    }
+                    const data = await res.json();
+
+                    // Add to set so duplicates are caught
+                    monitoredSet.add(username);
+                    usernamesToMonitor.push(username);
+
+                    // Remove empty-state row if present
+                    const emptyRow = tableBody.querySelector('tr td[colspan]');
+                    if (emptyRow) emptyRow.closest('tr').remove();
+
+                    // Append new row
+                    const row = buildRow(data);
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(30px)';
+                    row.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1)';
+                    tableBody.appendChild(row);
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            row.style.opacity = '1';
+                            row.style.transform = 'translateX(0)';
+                        });
+                    });
+
+                    msg.className = 'modal-message success';
+                    msg.textContent = `✓ "${data.username}" added to monitoring!`;
+
+                    setTimeout(() => closeAddModal(), 1400);
+
+                } catch (err) {
+                    console.error(err);
+                    msg.className = 'modal-message error';
+                    msg.textContent = `Could not find or analyze "${username}". Check the username and ensure the backend is running.`;
+                } finally {
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                }
+            };
+
             loadMonitoredInfluencers();
         });
     </script>

@@ -621,22 +621,33 @@
     </div>
 
     <script>
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const today = new Date();
+        
+        // Helper to format date offset from today
+        function getOffsetDateStr(daysAgo) {
+            const d = new Date(today);
+            d.setDate(today.getDate() - daysAgo);
+            return `${months[d.getMonth()]} ${d.getDate()}`;
+        }
+
         const timelineData = [
-            { date: "Oct 11", score: 88, event: null },
-            { date: "Oct 12", score: 89, event: null },
-            { date: "Oct 13", score: 90, event: null },
-            { date: "Oct 14", score: 90, event: null },
-            { date: "Oct 15", score: 85, event: "Follower Spike Detected" },
-            { date: "Oct 16", score: 82, event: null },
-            { date: "Oct 17", score: 80, event: null },
-            { date: "Oct 18", score: 78, event: "Bot Comments Detected" },
-            { date: "Oct 19", score: 79, event: null },
-            { date: "Oct 20", score: 81, event: null },
-            { date: "Oct 21", score: 83, event: null },
-            { date: "Oct 22", score: 84, event: null },
-            { date: "Oct 23", score: 84, event: null },
-            { date: "Oct 24", score: 84, event: null }
+            { date: getOffsetDateStr(13), score: 88, event: null },
+            { date: getOffsetDateStr(12), score: 89, event: null },
+            { date: getOffsetDateStr(11), score: 90, event: null },
+            { date: getOffsetDateStr(10), score: 90, event: null },
+            { date: getOffsetDateStr(9), score: 85, event: "Follower Spike Detected" },
+            { date: getOffsetDateStr(8), score: 82, event: null },
+            { date: getOffsetDateStr(7), score: 80, event: null },
+            { date: getOffsetDateStr(6), score: 78, event: "Bot Comments Detected" },
+            { date: getOffsetDateStr(5), score: 79, event: null },
+            { date: getOffsetDateStr(4), score: 81, event: null },
+            { date: getOffsetDateStr(3), score: 83, event: null },
+            { date: getOffsetDateStr(2), score: 84, event: null },
+            { date: getOffsetDateStr(1), score: 84, event: null },
+            { date: getOffsetDateStr(0), score: 84, event: null }
         ];
+
 
         function buildChart() {
             const wrapper = document.getElementById('chartWrapper');

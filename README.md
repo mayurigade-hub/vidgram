@@ -35,7 +35,7 @@ It then feeds this analysis into a financial calculator to project critical risk
 ## 📸 Screenshots
 
 ### 🌐 Dashboard
-> *A sleek, dark-themed dashboard presenting core marketing intelligence. Featuring dynamic metrics cards, recent influencer search logs, and quick action shortcuts for marketing campaign managers.*
+> *A sleek dashboard presenting core marketing intelligence. Featuring dynamic metrics cards, recent influencer search logs, and quick action shortcuts for marketing campaign managers.*
 
 ![Landing Page](./assets/dashboard.png)
 

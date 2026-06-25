@@ -34,31 +34,31 @@ It then feeds this analysis into a financial calculator to project critical risk
 
 ## 📸 Screenshots
 
-### 🌐 Landing Page
+### 🌐 Dashboard
 > *A sleek, dark-themed dashboard presenting core marketing intelligence. Featuring dynamic metrics cards, recent influencer search logs, and quick action shortcuts for marketing campaign managers.*
 
-![Landing Page](./assets/Landing-Page.png)
+![Landing Page](./assets/dashboard.png)
 
 ---
 
 ### 🚀 Influencer Analysis — Fraud Scoring
 > *Deep-dive analysis interface displaying authenticity scores, ML-driven fraud probabilities, and highlighted risk alerts. Interactive charts breakdown suspicious follower ratios, bot engagement, and audience demographics mismatch.*
 
-![Influencer Analysis](./assets/Influencer-Analysis.png)
+![Influencer Analysis](./assets/InfluencerAnalysis.png)
 
 ---
 
 ### 💸 Budget Simulator — Financial Projections
 > *An interactive budget forecaster where managers specify campaign budgets and project genuine vs. wasted spend. Real-time dials compute estimated cost per genuine follower and overall financial risk classification.*
 
-![Budget Simulator](./assets/Budget-Simulator.png)
+![Budget Simulator](./assets/BudgetSimulator.png)
 
 ---
 
 ### 📊 Campaign Monitor — Real-Time Surveillance
 > *A live surveillance dashboard showing a tabular view of all monitored influencers, fetching live scores and risk alerts from the AI engines. Built-in sorting, filtering, and rapid search speed up creator sorting.*
 
-![Campaign Monitor](./assets/Campaign-Monitor.png)
+![Campaign Monitor](./assets/CampaignMonitor.png)
 
 ---
 
